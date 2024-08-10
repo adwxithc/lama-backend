@@ -16,7 +16,7 @@ class JWTToken{
     }
 
 
-    verifyJwt(token: string,key:string){
+    verifyJwt(token: string,key:string):Promise<IJwtPayload>{
         
         return new Promise((resolve, reject)=>{
             jwt.verify(token, key,(err, decoded)=>{

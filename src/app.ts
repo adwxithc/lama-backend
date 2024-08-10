@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-handler";
+import { userRouter } from "./routes/userRoter";
 
 
 
@@ -22,7 +23,7 @@ const corsOptions = {
 };
 
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+// app.use(express.urlencoded({extended:true}));
 
 
 
@@ -33,6 +34,10 @@ app.use(cors(corsOptions));
 
 
 
+app.use("/api/user",userRouter(express.Router()));
+
+
+
 app.use(errorHandler);
 
-export { app };
+export { app }; 
