@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { body, query } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import { validateRequest } from '../middlewares/validateRequest';
 import { userController } from '../controller/userController';
 import protect from '../middlewares/authMiddleware';
@@ -49,7 +49,7 @@ export function userRouter(router: Router) {
     );
 
     router.post(
-        '/episode', 
+        '/episode',
         [
             body('name')
                 .notEmpty()
@@ -63,7 +63,11 @@ export function userRouter(router: Router) {
                 .withMessage(
                     'description must be between 10 and 1000 characters long'
                 ),
-            body('projectId').notEmpty().withMessage('projectId is required'),
+            body('projectId')
+                .notEmpty()
+                .withMessage('projectId is required')
+                .isMongoId()
+                .withMessage('Invalid project ID format'),
             body('method')
                 .notEmpty()
                 .withMessage('method is required')
@@ -75,7 +79,52 @@ export function userRouter(router: Router) {
         validateRequest,
         protect.protectUser,
         userController.addEpisode
-);
+    );
+
+    router.get(
+        '/project/:projectId/episodes',
+        [
+            param('projectId')
+                .isMongoId()
+                .withMessage('Invalid project ID format'),
+            query('page')
+                .isInt({ min: 1 })
+                .withMessage('page should be an integer greater than 0'),
+            query('limit')
+                .isInt({ min: 1 })
+                .withMessage('limit should be an integer greater than 0'),
+        ],
+        validateRequest,
+        protect.protectUser,
+        userController.getEpisodes
+    );
+
+    router.patch('/project/:projectId/episode/:episodeId/delete', 
+        [
+            param('projectId')
+            .isMongoId()
+            .withMessage('Invalid project ID format'),
+            param('episodeId').isMongoId().withMessage('Invalid episode ID format'),
+        ],
+        validateRequest,
+        protect.protectUser,
+        userController.deleteEpisode
+    );
+    router.patch(
+        '/project/:projectId/episode/:episodeId/edit',
+        [
+            param('projectId')
+            .isMongoId()
+            .withMessage('Invalid project ID format'),
+            param('episodeId').isMongoId().withMessage('Invalid episode ID format'),
+        ],
+        validateRequest,
+        protect.protectUser,
+        userController.editEpisode
+
+    )
+
+
 
     return router;
 }

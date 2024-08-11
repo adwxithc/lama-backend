@@ -17,7 +17,7 @@ const episodeSchema = new Schema<IEpisode>(
         },
         method: {
             type: String,
-            enum: ['active', 'inactive', 'archived'],
+            enum: ['youtube', 'rss', 'spotify'],
             required: true,
         },
         projectId: {
@@ -25,6 +25,10 @@ const episodeSchema = new Schema<IEpisode>(
             ref: 'Project',
             required: true,
         },
+        deleted:{
+            type:Boolean,
+            default:false,
+        }
     },
     {
         timestamps: true,

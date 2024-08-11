@@ -20,6 +20,7 @@ export interface IEpisode{
     description:string,
     method:'youtube'| 'spotify' |'rss',
     projectId:Schema.Types.ObjectId,
+    deleted?:Boolean,
     createdAt?:Date,
     updatedAt?:Date,
 
