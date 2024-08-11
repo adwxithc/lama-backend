@@ -20,7 +20,7 @@ class UserController {
             { email },
             process.env.JWT_KEY as string
         );
-        res.cookie('jwt', token, tokenOptions);
+        res.cookie('token', token, tokenOptions);
         res.json({
             success: true,
             data: { name, email },
@@ -37,11 +37,33 @@ class UserController {
             limit: Number(limit),
         });
         const lastPage = Math.ceil(total / Number(limit));
+        const totalPages = Math.ceil(total/Number(limit))
 
         res.json({
             success: true,
-            data: { projects, lastPage },
+            data: { projects, lastPage, totalPages },
         });
+    }
+
+    async createProject(req: Req, res: Res) {
+        const {name}= req.body;
+        const {email} = req.user as {email:string}
+        const project = await projectRepository.createProject({name,episodes:0,userMail:email})
+        res.json({
+            success:true,
+            data:project,
+            message:"New project created."
+        })
+    }
+
+    async addEpisode(req:Req, res:Res) {
+        const {name, description, method, projectId} = req.body;
+        const episode = await projectRepository.addEpisode({description,method,name,projectId})
+        res.json({
+            success:true,
+            data:episode,
+            message:'New Episode Added'
+        })
     }
 }
 

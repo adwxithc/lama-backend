@@ -1,3 +1,4 @@
+import { Schema } from "mongoose"
 
 export interface IUser{
     name:string,
@@ -12,4 +13,14 @@ export interface IProject{
     createdAt?:string
     updatedAt?:string
     episodes:number
+}
+
+export interface IEpisode{
+    name:string,
+    description:string,
+    method:'youtube'| 'spotify' |'rss',
+    projectId:Schema.Types.ObjectId,
+    createdAt?:Date,
+    updatedAt?:Date,
+
 }
