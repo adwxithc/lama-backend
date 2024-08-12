@@ -5,12 +5,14 @@ dotenv.config();
 import connectDB from "./config/db";
 import { app } from "./app";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 const start = async () => {
     if (!process.env.JWT_KEY) {
         throw new Error("JWT_KEY must be defined");
     }
+    console.log(process.env.JWT_KEY,'process.env.JWT_KEY');
+    
     try {
         await connectDB();
     } catch (error) {
