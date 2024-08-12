@@ -33,6 +33,7 @@ app.set("trust proxy", true);
 app.use(cors(corsOptions));
 
 
+app.get('/',(req,res)=>{res.json({message:'hllow'})})
 
 app.use("/api/user",userRouter(express.Router()));
 
