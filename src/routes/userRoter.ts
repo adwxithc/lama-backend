@@ -125,14 +125,52 @@ export function userRouter(router: Router) {
         userController.editEpisode
 
     )
-    router.put(
-        '/project/:projectId/widget-config',
+
+    router.patch(
+        '/project/:projectId/widget-config/general',
+        [
+            param('projectId')
+            .notEmpty().withMessage('Project ID is required')
+            .isMongoId().withMessage('Invalid Project ID'),
+    
+        // chatbotName
+        body('chatbotName')
+            .isString().withMessage('Chatbot name must be a string'),
+    
+        // welcomeMessage 
+        body('welcomeMessage')
+            .isString().withMessage('Welcome message must be a string'),
+    
+        // inputPlaceholder
+        body('inputPlaceholder')
+            .optional()
+            .isString().withMessage('Input placeholder must be a string'),
+    
+        ],
+        validateRequest,
+        protect.protectUser,
+        userController.updateGeneralWidget
+    )
+    router.patch(
+        '/project/:projectId/widget-config/display',
         upload.single('image'),
         validateWidget,
         validateRequest,
         protect.protectUser,
-        userController.updateWidget
+        userController.updateDisplayWidget
 
+    )
+
+    router.get(
+        '/project/:projectId/widget-config',
+        [
+            param('projectId')
+            .notEmpty().withMessage('Project ID is required')
+            .isMongoId().withMessage('Invalid Project ID'),
+        ],
+        validateRequest,
+        protect.protectUser,
+        userController.getWidget
     )
 
 

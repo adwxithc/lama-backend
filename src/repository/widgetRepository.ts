@@ -9,6 +9,10 @@ class WidgetRepsitory {
         return await WidgetModel.findOneAndUpdate({projectId},{$set:newWidgetUpdate},{new:true, upsert:true})
 
     }
+
+    async getWidget(projectId:string){
+        return await WidgetModel.findOne({projectId})
+    }
 }
 
 const widgetRepository = new WidgetRepsitory();

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 import { IconPosition, IconSize, IWidget } from '../types/data';
 
-const userSchema = new Schema<IWidget>(
+const widgetSchema = new Schema<IWidget>(
     {
         chatbotName: String,
         welcomeMessage: String,
@@ -26,7 +26,7 @@ const userSchema = new Schema<IWidget>(
             required: true,
             ref: 'Project',
         },
-        shwoSource:Boolean,
+        showSource:Boolean,
         
     },
     {
@@ -41,6 +41,6 @@ const userSchema = new Schema<IWidget>(
     }
 );
 
-const WidgetModel = mongoose.model<IWidget>('User', userSchema);
+const WidgetModel = mongoose.model<IWidget>('Widget', widgetSchema);
 
 export default WidgetModel;

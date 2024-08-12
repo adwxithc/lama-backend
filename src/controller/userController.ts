@@ -7,7 +7,7 @@ import { tokenOptions } from '../utils/tockenOptions';
 import userRepository from '../repository/userRepository';
 import projectRepository from '../repository/projectRepository';
 import { IJwtPayload } from '../types/jwt';
-import { IEpisode, IWidget } from '../types/data';
+import { IEpisode, IWidget, IWidgetGeneralConfig } from '../types/data';
 import imageFormater from '../services/imageFormater';
 import fileBucket from '../services/fileBucket';
 import widgetRepository from '../repository/widgetRepository';
@@ -136,11 +136,34 @@ class UserController {
         });
     }
 
-    async updateWidget(req: Req, res: Res) {
+    async updateGeneralWidget(req:Req, res:Res){
+        const { projectId } = req.params;
+        const {email} = req.user as IJwtPayload;
+        const generalWidget= req.body as IWidgetGeneralConfig;
+        console.log(generalWidget);
+        
+        const project = await projectRepository.findProject({email,id:projectId})
+        if(!project){
+            throw new BadRequestError('Invalid project id or access')
+        }
+
+        const newWidgetUpdate = sanitizeUpdateData({...generalWidget},'general')
+
+        const newWidget = await widgetRepository.update(project.id,newWidgetUpdate);
+        res.json({
+            success: true,
+            data: newWidget,
+        });
+    }
+
+    async updateDisplayWidget(req: Req, res: Res) {
 
         const { projectId } = req.params;
         const {email} = req.user as IJwtPayload;
         const widget= req.body as Partial<IWidget>;
+        
+        console.log(widget);
+        
         const { file } = req;
         let imageName = '';
         if (file) {
@@ -164,13 +187,27 @@ class UserController {
             throw new BadRequestError('Invalid project id or access')
         }
 
-        const newWidgetUpdate = sanitizeUpdateData({...widget,image:imageName})
+        const newWidgetUpdate = sanitizeUpdateData({...widget,image:imageName},'display')
       
 
         const newWidget = await widgetRepository.update(project.id,newWidgetUpdate);
         res.json({
             success: true,
             data: newWidget,
+        });
+    }
+
+    async getWidget(req:Req, res:Res){
+        const { projectId } = req.params;
+        const {email} = req.user as IJwtPayload;
+        const project = await projectRepository.findProject({email,id:projectId})
+        if(!project){
+            throw new BadRequestError('Invalid project id or access')
+        }
+        const widget = await widgetRepository.getWidget(projectId)
+        res.json({
+            success: true,
+            data: widget,
         });
     }
 }

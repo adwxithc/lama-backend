@@ -7,21 +7,6 @@ export  const validateWidget = [
         .notEmpty().withMessage('Project ID is required')
         .isMongoId().withMessage('Invalid Project ID'),
 
-    // chatbotName (optional)
-    body('chatbotName')
-        .optional()
-        .isString().withMessage('Chatbot name must be a string'),
-
-    // welcomeMessage (optional)
-    body('welcomeMessage')
-        .optional()
-        .isString().withMessage('Welcome message must be a string'),
-
-    // inputPlaceholder (optional)
-    body('inputPlaceholder')
-        .optional()
-        .isString().withMessage('Input placeholder must be a string'),
-
     // primaryColor (optional)
     body('primaryColor')
         .optional()
