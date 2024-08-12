@@ -15,7 +15,6 @@ import { sanitizeUpdateData } from '../services/sanitise';
 
 class UserController {
     async login(req: Req, res: Res) {
-        console.log('req got');
         
         const { name, email } = req.body;
         let user = await userRepository.findByEmail(email);

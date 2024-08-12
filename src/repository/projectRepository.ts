@@ -28,7 +28,7 @@ class ProjectRepsitory {
     }
 
     async createProject(project: IProject) {
-        const exist = await ProjectModel.findOne({ name: project.name });
+        const exist = await ProjectModel.findOne({ name: project.name,userMail:project.userMail });
         if (exist) {
             throw new BadRequestError(
                 ' A project with this name already exist'
