@@ -17,6 +17,7 @@ Key Features:
 2. [Sample .env File](#sample-env-file)
 3. [Contributing](#contributing)
 4. [Contact](#contact)
+5. [Live Demo](#live-demo)
 
 ## Installation
 
@@ -66,7 +67,6 @@ To set up this project locally, follow these steps:
 
    The server will be running at `http://localhost:5000`.
 
-
 ## Sample .env File
 
 To configure the application, create a `.env` file in the root directory with the following content:
@@ -103,3 +103,7 @@ For questions or feedback, please contact:
 Email: [adwaithjanardhanan0@gmail.com](mailto:adwaithjanardhanan0@gmail.com)  
 LinkedIn: [https://www.linkedin.com/in/adwaith-c-25b5a0218/](https://www.linkedin.com/in/adwaith-c-25b5a0218/)  
 GitHub: [https://github.com/adwxithc](https://github.com/adwxithc)
+
+## Live Demo
+
+You can view a live demo of the application here: [Live Demo](https://lama.easycart.website)
