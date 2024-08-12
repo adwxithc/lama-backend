@@ -8,10 +8,11 @@ import { app } from "./app";
 const PORT = process.env.PORT || 5000;
 
 const start = async () => {
+    console.log(process.env.JWT_KEY,'process.env.JWT_KEY');
     if (!process.env.JWT_KEY) {
         throw new Error("JWT_KEY must be defined");
     }
-    console.log(process.env.JWT_KEY,'process.env.JWT_KEY');
+  
     
     try {
         await connectDB();
