@@ -1,9 +1,8 @@
 {
     "build": {
-      "cmd": "npm run build"
+      "command": "npm run build",
+      "output": "dist"
     },
-    "start": {
-      "cmd": "npm start"
-    }
+    "start": "npm start"
   }
   
