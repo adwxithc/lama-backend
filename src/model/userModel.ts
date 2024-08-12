@@ -15,7 +15,7 @@ const userSchema = new Schema<IUser>(
             required: true,
             unique:true
         },
-      
+        profile:String
     },
     {
         timestamps: true,

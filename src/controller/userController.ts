@@ -16,19 +16,21 @@ import { sanitizeUpdateData } from '../services/sanitise';
 class UserController {
     async login(req: Req, res: Res) {
         const { name, email } = req.body;
-        const user = await userRepository.findByEmail(email);
+        let user = await userRepository.findByEmail(email);
         if (!user) {
-            await userRepository.createUser({ email, name });
+            user = await userRepository.createUser({ email, name });
         }
 
+        user.profile = fileBucket.getFileAccessURL(user.profile||'')
         const token = jWTToken.createJWT(
             { email },
             process.env.JWT_KEY as string
         );
+
         res.cookie('token', token, tokenOptions);
         res.json({
             success: true,
-            data: { name, email },
+            data: { name, email,profile:user.profile },
         });
     }
 
@@ -162,10 +164,10 @@ class UserController {
         const {email} = req.user as IJwtPayload;
         const widget= req.body as Partial<IWidget>;
         
-        console.log(widget);
-        
         const { file } = req;
-        let imageName = '';
+        
+        const oldWidget = await widgetRepository.getWidget(projectId)
+        let imageName = oldWidget?.image
         if (file) {
             const imageBuffer = file.buffer;
             const croppedImageBuffer = await imageFormater.crop({
@@ -176,10 +178,15 @@ class UserController {
                 maxHeight: Number(widget.IconSize),
             });
 
+            if(imageName){
+                await fileBucket.deleteFile(imageName)
+            }
+
             imageName = await fileBucket.uploadImage({
                 imageBuffer: croppedImageBuffer,
                 mimetype: file.mimetype,
             });
+            
         }
 
         const project = await projectRepository.findProject({email,id:projectId})
@@ -205,9 +212,49 @@ class UserController {
             throw new BadRequestError('Invalid project id or access')
         }
         const widget = await widgetRepository.getWidget(projectId)
+        if(widget?.image)
+        widget.image=fileBucket.getFileAccessURL(widget.image);
+
         res.json({
             success: true,
             data: widget,
+        });
+    }
+
+    async updateAccount(req:Req, res:Res) {
+        const {name}= req.body as {name:string};
+        const {email} = req.user as IJwtPayload;
+        const { file } = req;
+        
+        const oldUser = await userRepository.findByEmail(email)
+        let imageName = oldUser?.profile
+        if (file) {
+            const imageBuffer = file.buffer;
+            const croppedImageBuffer = await imageFormater.crop({
+                aspectRatio: 1,
+                imageBuffer,
+                format: 'jpeg',
+                maxWidth: 96,
+                maxHeight: 96,
+            });
+
+            if(imageName){
+                await fileBucket.deleteFile(imageName)
+            }
+
+            imageName = await fileBucket.uploadImage({
+                imageBuffer: croppedImageBuffer,
+                mimetype: file.mimetype,
+            });
+            
+        }
+
+        const user = await userRepository.updateUser({name, profile:imageName||'',email})
+        if(user?.profile)
+        user.profile= fileBucket.getFileAccessURL(user?.profile)
+        res.json({
+            success: true,
+            data: user,
         });
     }
 }

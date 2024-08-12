@@ -173,6 +173,21 @@ export function userRouter(router: Router) {
         userController.getWidget
     )
 
+    router.patch(
+        '/account',
+        upload.single('image'),
+        [
+            body('name')
+            .notEmpty()
+            .withMessage('name is required')
+            .isLength({ min: 3, max: 30 })
+            .withMessage('name must be between 3 and 30 characters long'),
+        ],
+        validateRequest,
+        protect.protectUser,
+        userController.updateAccount,
+
+    )
 
     return router;
 }
