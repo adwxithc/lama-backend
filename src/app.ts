@@ -8,8 +8,6 @@ import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/error-handler";
 import { userRouter } from "./routes/userRoter";
 
-
-
 dotenv.config();
 
 const app = express();
@@ -22,6 +20,8 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 
+
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
@@ -31,9 +31,6 @@ app.set("trust proxy", true);
 
 
 app.use(cors(corsOptions));
-
-
-app.get('/',(req,res)=>{res.json({message:'hllow'})})
 
 app.use("/api/user",userRouter(express.Router()));
 

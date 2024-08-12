@@ -9,7 +9,6 @@ const PORT = process.env.PORT || 5000;
 
 const start = async () => {
 
-    console.log(process.env.JWT_KEY,'process.env.JWT_KEY',process.env.FRONT_END_URL);
     if (!process.env.JWT_KEY) {
         throw new Error("JWT_KEY must be defined");
     }
