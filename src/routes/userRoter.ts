@@ -3,6 +3,8 @@ import { body, param, query } from 'express-validator';
 import { validateRequest } from '../middlewares/validateRequest';
 import { userController } from '../controller/userController';
 import protect from '../middlewares/authMiddleware';
+import { validateWidget } from '../services/validates';
+import { upload } from '../middlewares/multer';
 
 export function userRouter(router: Router) {
     router.post(
@@ -123,7 +125,15 @@ export function userRouter(router: Router) {
         userController.editEpisode
 
     )
+    router.put(
+        '/project/:projectId/widget-config',
+        upload.single('image'),
+        validateWidget,
+        validateRequest,
+        protect.protectUser,
+        userController.updateWidget
 
+    )
 
 
     return router;

@@ -7,7 +7,11 @@ import { tokenOptions } from '../utils/tockenOptions';
 import userRepository from '../repository/userRepository';
 import projectRepository from '../repository/projectRepository';
 import { IJwtPayload } from '../types/jwt';
-import { IEpisode } from '../types/data';
+import { IEpisode, IWidget } from '../types/data';
+import imageFormater from '../services/imageFormater';
+import fileBucket from '../services/fileBucket';
+import widgetRepository from '../repository/widgetRepository';
+import { sanitizeUpdateData } from '../services/sanitise';
 
 class UserController {
     async login(req: Req, res: Res) {
@@ -116,14 +120,57 @@ class UserController {
 
     async editEpisode(req: Req, res: Res) {
         const { episodeId, projectId } = req.params;
-        const {description} = req.body
+        const { description } = req.body;
         const { email } = req.user as IJwtPayload;
-        const episode = await projectRepository.editEpisode({ email, episodeId, projectId, description });
-        
+        const episode = await projectRepository.editEpisode({
+            email,
+            episodeId,
+            projectId,
+            description,
+        });
+
         res.json({
             success: true,
             message: 'Episode updated successfully',
-            data:episode
+            data: episode,
+        });
+    }
+
+    async updateWidget(req: Req, res: Res) {
+
+        const { projectId } = req.params;
+        const {email} = req.user as IJwtPayload;
+        const widget= req.body as Partial<IWidget>;
+        const { file } = req;
+        let imageName = '';
+        if (file) {
+            const imageBuffer = file.buffer;
+            const croppedImageBuffer = await imageFormater.crop({
+                aspectRatio: 1,
+                imageBuffer,
+                format: 'jpeg',
+                maxWidth: Number(widget.IconSize),
+                maxHeight: Number(widget.IconSize),
+            });
+
+            imageName = await fileBucket.uploadImage({
+                imageBuffer: croppedImageBuffer,
+                mimetype: file.mimetype,
+            });
+        }
+
+        const project = await projectRepository.findProject({email,id:projectId})
+        if(!project){
+            throw new BadRequestError('Invalid project id or access')
+        }
+
+        const newWidgetUpdate = sanitizeUpdateData({...widget,image:imageName})
+      
+
+        const newWidget = await widgetRepository.update(project.id,newWidgetUpdate);
+        res.json({
+            success: true,
+            data: newWidget,
         });
     }
 }
