@@ -99,7 +99,7 @@ Contributions are welcome! To contribute:
 
 For questions or feedback, please contact:
 
-**Your Name**  
+**Adwaith C**  
 Email: [adwaithjanardhanan0@gmail.com](mailto:adwaithjanardhanan0@gmail.com)  
 LinkedIn: [https://www.linkedin.com/in/adwaith-c-25b5a0218/](https://www.linkedin.com/in/adwaith-c-25b5a0218/)  
 GitHub: [https://github.com/adwxithc](https://github.com/adwxithc)
