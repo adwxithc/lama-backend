@@ -1,0 +1,25 @@
+version: '3'
+
+tasks:
+  install:
+    desc: "Install dependencies"
+    cmds:
+      - npm install
+  install-ci: # this is used in CI to install dependencies without modifying package-lock.json and Deletes node_modules before installing
+    desc: "Install dependencies for CI"
+    cmds:
+      - npm ci
+
+  build:
+    desc: "Build the application"
+    cmds:
+      - npm run build
+
+  test:
+    desc: "Run tests"
+    cmds:
+      - npm test
+  run:
+    desc: "Start the application"
+    cmds:
+      - npm run dev

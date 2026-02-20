@@ -1,0 +1,58 @@
+name: Run Tests
+on:
+  push:
+    branches:
+      - main
+    # paths: can specify paths to trigger the workflow only when changes are made to specific files or directories
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Set up Node.js
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+      - name: Install task
+        uses: supplypike/setup-bin@v5 #i use this to install task runner in github actions (setup-binary action)
+        with:
+          name: task
+          uri: "https://github.com/go-task/task/releases/download/v3.48.0/task_linux_amd64.tar.gz"
+          version: "3.48.0"
+      - name: Install node deps
+        working-directory: ./
+        run: |
+          task install-ci
+      - name: Run tests
+        working-directory: ./
+        run: |
+          task test
+  # test-go:
+  #   runs-on: ubuntu-24.04
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+  #     - name: Set up Golang environment  --- here we can set up golang environment if we have any go code to test
+  #       uses: actions/setup-go@v3 # v3.0.0
+  #       with:
+  #         cache-dependency-path: go.sum
+  #     - name: Install task
+  #       uses: supplypike/setup-bin@v5 #i use this to install task runner in github actions (setup-binary action)
+  #       with:
+  #         name: task
+  #         uri: "https://github.com/go-task/task/releases/download/v3.48.0/task_linux_amd64.tar.gz"
+  #         version: "3.48.0"
+  #     - name: Install app deps
+  #       working-directory: ./ -- path to our go service if any
+  #       run: |
+  #         task install-ci
+  #     - name: Run tests
+  #       working-directory: ./ -- path to our go service if any
+  #       run: |
+  #         task test
