@@ -2,11 +2,11 @@ name: Run Tests
 on:
   push:
     branches:
-      - main
+      - master
     # paths: can specify paths to trigger the workflow only when changes are made to specific files or directories
   pull_request:
     branches:
-      - main
+      - master
   workflow_dispatch:
 jobs:
   test:
