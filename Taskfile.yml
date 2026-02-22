@@ -1,6 +1,27 @@
 version: '3'
 
+vars:
+  IMAGE_REPO: "adwaithc/lama-backend"
+  IMAGE_TAG: "foobarbaz" # this will be overridden by the generate-version-tag task in CI
+  SERVICE_RELEASE_TAG: "lama-backend"
+
+includes:
+  utils: ./utils/Taskfile.yml
+
 tasks:
+  build-container-image:
+    desc: "Build the container image"
+    cmds:
+      - docker build -t {{.IMAGE_REPO}}{{.IMAGE_TAG}} .
+  build-container-image-multi-arch:
+    desc: "Build the container image for multiple architectures"
+    cmds:
+      - |
+        docker buildx build \
+        --platform linux/amd64,linux/arm64 \
+        -t {{.IMAGE_REPO}}:{{.IMAGE_TAG}} \
+        --push \
+        .
   install:
     desc: "Install dependencies"
     cmds:

@@ -1,0 +1,23 @@
+name: Build and Push Docker Image
+on:
+  workflow_dispatch:
+
+jobs:
+  build-push-container-images:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0 # Fetch all history for git commands to work properly not 1(default only latest commit)
+      - name: Install task
+        uses: supplypike/setup-bin@v5 #i use this to install task runner in github actions (setup-binary action)
+        with:
+          name: task
+          uri: "https://github.com/go-task/task/releases/download/v3.48.0/task_linux_amd64.tar.gz"
+          version: "3.48.0"
+      - name: Authenticate to Docker Hub
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
