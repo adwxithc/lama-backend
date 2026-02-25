@@ -11,13 +11,38 @@ jobs:
         with:
           fetch-depth: 0 # Fetch all history for git commands to work properly not 1(default only latest commit)
       - name: Install task
-        uses: supplypike/setup-bin@v5 #i use this to install task runner in github actions (setup-binary action)
-        with:
-          name: task
-          uri: "https://github.com/go-task/task/releases/download/v3.48.0/task_linux_amd64.tar.gz"
-          version: "3.48.0"
+        uses: ./.github/actions/setup-dependencies
       - name: Authenticate to Docker Hub
+        if: ${{ !env.ACT }}
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # - name: Set Up QEMU
+      #   uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 #3.7.0
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
+      - name: Compute image tag
+        id: image-tag
+        working-directory: .
+        env:
+          ENVIRONMENT: production
+          PROJECT_NAME: lama-backend
+        run: |
+          version=$(task utils:generate-version -- "$PROJECT_NAME")
+          image_tag=$(task utils:generate-version-tag -- "$PROJECT_NAME" )
+          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo "image_tag=${image_tag}" >> $GITHUB_OUTPUT
+          # TODO: generate the actual version/tag
+
+          echo "version=${version}"
+          echo "image_tag=${image_tag}"
+      # - name: Build and push
+      #   uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 #v6.19.2
+      #   with:
+      #     context: .
+      #     push: ${{!env.ACT }}
+      #     tags: ${{ steps.image-tag.outputs.image_tag }}
+      #     platforms: linux/amd64
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max

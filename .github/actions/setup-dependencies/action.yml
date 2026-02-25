@@ -1,0 +1,20 @@
+name: "Setup Dependencies"
+description: "Setup tools/dependencies for the workflow"
+inputs:
+    install_task:
+        description: "Whether to install task runner or not"
+        default: "true"
+    task_version:
+        description: "Version of task runner to install"
+        default: "v3.48.0"
+
+runs:
+    using: composite
+    steps:
+        - name: Install task
+          if: ${{ inputs.install_task == 'true' }}
+          uses: supplypike/setup-bin@v5 #i use this to install task runner in github actions (setup-binary action)
+          with:
+              name: task
+              uri:  "https://github.com/go-task/task/releases/download/${{inputs.task_version}}/task_linux_amd64.tar.gz"
+              version: ${{inputs.task_version}}
