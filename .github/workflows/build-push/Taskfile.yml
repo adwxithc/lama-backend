@@ -1,5 +1,9 @@
 version : "3"
 
+env:
+  GITHUB_TOKEN:
+    sh: gh auth token
+
 tasks:
   trigger-workflow:
     desc: Trigger GitHub Actions workflow using act
@@ -10,3 +14,17 @@ tasks:
           -P ubuntu-24.04=catthehacker/ubuntu:act-22.04 \
           --directory ../../.. \
           -W .github/workflows/build-push.yml
+  trigger-workflow-push-tag:
+    desc: Trigger GitHub Actions workflow using act with push tag event
+    cmds:
+      - |
+        act push \
+          --container-architecture linux/amd64 \
+          -s GITHUB_TOKEN=${{.GITHUB_TOKEN}} \
+          -e .github/workflows/build-push/push-tag-event.json \
+          -P ubuntu-24.04=catthehacker/ubuntu:act-22.04 \
+          --directory ../../.. \
+          --no-skip-checkout \
+          -W .github/workflows/build-push.yml
+
+# --no-skip-checkout \

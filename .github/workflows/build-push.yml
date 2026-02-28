@@ -1,13 +1,18 @@
 name: Build and Push Docker Image
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - "**@[0-9]*.[0-9]*.[0-9]*"
 
 jobs:
   build-push-container-images:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
         with:
           fetch-depth: 0 # Fetch all history for git commands to work properly not 1(default only latest commit)
       - name: Install task
@@ -26,14 +31,18 @@ jobs:
         id: image-tag
         working-directory: .
         env:
-          ENVIRONMENT: production
+          ENVIRONMENT: staging
           PROJECT_NAME: lama-backend
         run: |
-          version=$(task utils:generate-version -- "$PROJECT_NAME")
-          image_tag=$(task utils:generate-version-tag -- "$PROJECT_NAME" )
+          if [[ "$ENVIRONMENT" == "production" ]]; then
+            version=$(task utils:generate-version -- "$PROJECT_NAME")
+            image_tag=$(task utils:generate-version-tag -- "$PROJECT_NAME" )
+          else
+            version=$(task utils:generate-extended-version -- "$PROJECT_NAME")
+            image_tag=$(task utils:generate-extended-version-tag -- "$PROJECT_NAME" )
+          fi
           echo "version=${version}" >> $GITHUB_OUTPUT
           echo "image_tag=${image_tag}" >> $GITHUB_OUTPUT
-          # TODO: generate the actual version/tag
 
           echo "version=${version}"
           echo "image_tag=${image_tag}"

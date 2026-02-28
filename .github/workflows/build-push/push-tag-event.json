@@ -1,0 +1,7 @@
+{
+    "ref": "refs/tags/lama-backend@1.0.1",
+    "ref_type": "tag",
+    "repository":{
+        "default_branch": "main"
+    }
+}
